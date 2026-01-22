@@ -69,6 +69,14 @@ func setupRoutes() {
 			Body:       "<h1>Home</h1>",
 		}
 	}
+
+	routes["POST /api/data"] = func(req HTTPRequest) HTTPResponse {
+		return HTTPResponse{
+			StatusCode: 200,
+			Headers:    map[string]string{"Content-Type": "application/json"},
+			Body:       `{"message": "Dados recebidos", "body": "` + req.Body + `"}`,
+		}
+	}
 }
 
 func handleConnection(conn net.Conn) {
