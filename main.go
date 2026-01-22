@@ -55,7 +55,8 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Fatal(err)
+			log.Println("error accept connection", err)
+			continue
 		}
 		go handleConnection(conn)
 	}
@@ -88,8 +89,8 @@ func handleConnection(conn net.Conn) {
 
 	requestLine, err := tp.ReadLine()
 	if err != nil {
-		if errors.Is(err, io.EOF) {
-			log.Println("Error reading request line:", err)
+		if !errors.Is(err, io.EOF) {
+			log.Println("error reading request line:", err)
 		}
 		return
 	}
@@ -109,7 +110,7 @@ func handleConnection(conn net.Conn) {
 	for {
 		headerLine, err := tp.ReadLine()
 		if err != nil {
-			log.Println("Error reading header line:", err)
+			log.Println("error reading header line:", err)
 			break
 		}
 
@@ -129,14 +130,14 @@ func handleConnection(conn net.Conn) {
 	if headers["Content-Length"] != "" {
 		contentLength, err := strconv.Atoi(headers["Content-Length"])
 		if err != nil {
-			log.Println("Error parsing Content-Length:", err)
+			log.Println("error parsing Content-Length:", err)
 			return
 		}
 
 		bodyBytes := make([]byte, contentLength)
 		_, err = reader.Read(bodyBytes)
 		if err != nil {
-			log.Println("Error reading body:", err)
+			log.Println("error reading body:", err)
 			return
 		}
 
